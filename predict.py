@@ -12,7 +12,9 @@ class Predictor(BasePredictor):
     def predict(self, 
         image: Path = Input(description="input image"),
         ) -> Path:
+        print("running bgremover on image", str(image))
         self.bgremover.image(str(image), background=False, output='/outputs')
+        os.system("ls -l /outputs")
         os.system("mv /outputs/*.png /outputs/output.png")
         return Path("/outputs/output.png")
 
