@@ -10,6 +10,10 @@ build:
     - "gdown==4.5.3"
   system_packages:
     - unzip
+    - "libgl1-mesa-glx"
+    - "libglib2.0-0"
+    - "ffmpeg"
+    - "libmagic-dev"
   run:
     # download model
     - gdown 11SBrkihQhtitVLqCKPW8mdQM2T1G0LTE
