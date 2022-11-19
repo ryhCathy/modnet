@@ -1,0 +1,18 @@
+build:
+  gpu: true
+  python_version: "3.8"
+  python_packages:
+    - "numpy==1.22.2"
+    - "Pillow==9.0.1"
+    - "opencv-python==4.5.5.62"
+    - "torch==1.10.1"
+    - "torchvision==0.11.2"
+    - "gdown==4.5.3"
+  system_packages:
+    - unzip
+  run:
+    # download model
+    - gdown 11SBrkihQhtitVLqCKPW8mdQM2T1G0LTE
+    - unzip weights.zip
+
+predict: "predict.py:Predictor"
