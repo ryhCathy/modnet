@@ -1,4 +1,5 @@
 import os
+from tempfile import TemporaryDirectory as tmpdir
 
 import magic
 from bg_remove import BGRemove
@@ -25,8 +26,9 @@ class Predictor(BasePredictor):
         image = new_filename
         
         print("running bgremover on image", str(image))
-        self.bgremover.image(str(image), background=False, output='/outputs')
-        os.system("ls -l /outputs")
-        os.system("mv /outputs/*.png /outputs/output.png")
-        return Path("/outputs/output.png")
+        output_path = tmpdir().name
+        self.bgremover.image(str(image), background=False, output=output_path)
+        #os.system("ls -l /outputs")
+        #os.system("mv /outputs/*.png /outputs/output.png")
+        return Path(f"{output_path}/output.png")
 

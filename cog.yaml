@@ -18,7 +18,7 @@ build:
     - "libmagic1"
   run:
     # download model
-    - gdown 11SBrkihQhtitVLqCKPW8mdQM2T1G0LTE
-    - unzip weights.zip
+    - gdown 1lXY7rhfJ_MLfFeaib-QKuw9AV37bgJYu
+    - unzip modnet_weights.zip
 
 predict: "predict.py:Predictor"
