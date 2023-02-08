@@ -22,13 +22,13 @@ class Predictor(BasePredictor):
         # we should change the backend to not give filenames without an extension in the future
         desired_extension = mime.split("/")[1]
         new_filename = image + "." + desired_extension
-        os.system(f"cp {image} {new_filename}")
+        os.system(f"cp \"{image}\" \"{new_filename}\"")
         image = new_filename
         
-        print("running bgremover on image", str(image))
+        print("running bgremover on image ", str(image))
         output_path = tmpdir().name
         self.bgremover.image(str(image), background=False, output=output_path)
         #os.system("ls -l /outputs")
-        #os.system("mv /outputs/*.png /outputs/output.png")
+        os.system(f"mv {output_path}/*.png {output_path}/output.png")
         return Path(f"{output_path}/output.png")
 

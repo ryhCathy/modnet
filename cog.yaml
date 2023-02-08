@@ -5,8 +5,8 @@ build:
     - "numpy==1.22.2"
     - "Pillow==9.0.1"
     - "opencv-python==4.5.5.62"
-    - "torch==1.10.1"
-    - "torchvision==0.11.2"
+    - "torch==1.13.0"
+    - "torchvision==0.14.0"
     - "gdown==4.5.3"
     - "python-magic==0.4.27"
   system_packages:
@@ -18,7 +18,7 @@ build:
     - "libmagic1"
   run:
     # download model
-    - gdown 1lXY7rhfJ_MLfFeaib-QKuw9AV37bgJYu
+    - wget https://github.com/pollinations/modnet/raw/main/modnet_weights.zip
     - unzip modnet_weights.zip
 
 predict: "predict.py:Predictor"
