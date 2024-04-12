@@ -17,6 +17,8 @@ if __name__ == "__main__":
                         required=False, help='Inference images foldername')
     parser.add_argument('--background', type=bool, default=False,
                         required=False, help='Background image adding')
+    parser.add_argument('--background_path', type=str, default='',
+                        required=False, help='Background image file path')
 
     args = parser.parse_args()
     try:
@@ -26,7 +28,10 @@ if __name__ == "__main__":
             bg_remover = BGRemove(args.ckpt_image)
 
         if args.image:
-            bg_remover.image(args.image, background=args.background)
+            if args.background_path:
+                bg_remover.image(args.image, background=args.background, background_path=args.background_path)
+            else:
+                bg_remover.image(args.image, background=args.background)
         elif args.video:
             bg_remover.video(args.video, background=args.background)
         elif args.webcam:

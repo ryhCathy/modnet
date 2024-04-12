@@ -1,11 +1,12 @@
-# MODNet Background Remover
+# Revised MODNet Background Image Replacement
 
 ## Application
 
-A deep learning approach to remove background and adding new background image
+A deep learning approach to remove background and adding new background image. For full details of [MODNet](https://github.com/pollinations/modnet), check [reference.md](reference.md).
 
 - Remove background from **images,videos & live webcam**
 - Adding new background to those **images,videos & webcam footage**
+
 
 ### Demo
 
@@ -15,52 +16,18 @@ A deep learning approach to remove background and adding new background image
 <td><b>After replacing the background with new image</b></td>
 </tr>
 <tr align="center">
-<td><img src="assets/sample_image/male.jpeg" alt="Male.jpg" width="460" height="500"/></td>
-<td><img src="output/male.png" alt="Male.png" width="460" height="500"/></td>
-</tr>
-<tr align="center">
-<td><b>Before removing the background from video</b></td>
-<td><b>After replacing the background with new image in this video</b></td>
-</tr>
-<tr align="center">
-<td colspan=2><img src="output/sample.gif" alt="Video" width="920" height="400"/></td>
-</tr>
+<td><img src="test.jpeg" alt="Male.jpg" width="460" height="500"/></td>
+<td><img src="output/test.png" alt="Male.png" width="460" height="500"/></td>
 <table>
 
-### Web View
-<table>
-<tr align="center">
-<td><b>Before removing the background</b></td>
-<td><b>After removing the background</b></td>
-</tr>
-<tr align="center">
-<td><img src="assets/sample_image/female.jpeg" alt="Female.jpeg" width="460" height="500"/></td>
-<td><img src="output/web_view.png" alt="Female.png" width="460" height="500"/></td>
-</tr>
-<table>
 
 ## Installation
 
 ### Python Version
 
-- Python == 3.8
+- Python == 3.9
 
 ### Virtual Environment
-
-#### Windows
-
-- `python -m venv venv`
-- `.\venv\Scripts\activate`
-- If any problem for scripts activation
-  - Execute following command in administration mode
-    - `Set-ExecutionPolicy Unrestricted -Force`
-  - Later you can revert the change
-    - `Set-ExecutionPolicy restricted -Force`
-
-#### Linux
-
-- `python -m venv venv`
-- `source venv/bin/activate`
 
 ### Library Installation
 
@@ -85,43 +52,50 @@ It will generate the output file in **output/** folder
 
 - `python inference.py --image image_path` **[Without background image]**
 - `python inference.py --image image_path --background True` **[With background image]**
+- `python inference.py --image image_path --background True --background_path background_img_path` **[With background image and path]**
 - Example:
   - `python inference.py --image assets/sample_image/female.jpeg`
   - `python inference.py --image assets/sample_image/male.jpeg --background True`
+  - `python inference.py --image test.jpeg --background True --background_path assets/background/bg2.jpg`
 
-#### Folder of images
 
-It will generate the output file in **output/** folder
 
-- `python inference.py --folder folder_path` **[Without background image]**
-- `python inference.py --folder folder_path --background True` **[With background image]**
-- Example:
-  - `python inference.py --folder assets/sample_image/`
-  - `python inference.py --folder assets/sample_image/ --background True`
+### 替换prompt-based背景图像的接口（POST）
 
-### Video
+## 接口地址
+`http://183.179.173.18:5000/replace-background` (app.py Flask app as backend)
 
-It will generate the output file in **output/** folder
+## 请求方法
+`POST`
 
-- `python inference.py --video video_path` **[Without background image]**
-- `python inference.py --video video_path --background True` **[With background image]**
-- Example:
-  - `python inference.py --video assets/sample_video/sample.mp4`
-  - `python inference.py --video assets/sample_video/sample.mp4 --background True`
+## 请求参数
+### Body
+- `bg_prompt`: 字符串，描述希望生成的背景图片风格
+- `file_path`: 字符串，被替换背景的图片路径
 
-### Webcam
+## 请求示例
+```python
+import requests
+from IPython.display import display
+from PIL import Image
+import io
 
-- `python inference.py --webcam True` **[Without background image]**
-- `python inference.py --webcam True --background True` **[With background image]**
+# URL of the Flask app
+url = 'http://183.179.173.18:5000/replace-background'
+file_path = './modnet/test.jpeg'
+bg_prompt = '夜间小路背景'
 
-### Webinterface
+with open(file_path, 'rb') as file:
+    files = {'file': (os.path.basename(file_path), file, 'image/jpeg')}   # 记得根据上传图片类型，更换MIME参数
+    response = requests.post(url, files=files, data={'background_prompt': prompt})
+        
+    if response.status_code == 200:
+        # Display image directly in Jupyter Notebook
+        image_bytes = io.BytesIO(response.content)
+        img = Image.open(image_bytes)
+        display(img)
+    else:
+        print("Failed to process image:", response.text)
 
-- `python api.py`
-- Click on this [link/localhost](http://127.0.0.1:8000)
-- Upload the image and wait
 
-## Reference
-
-- [A Trimap-Free Solution for Portrait Matting in Real Time under Changing Scenes](https://github.com/ZHKKKe/MODNet)
-- Sample Female photo by <span><a href="https://unsplash.com/@michaeldam?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Michael Dam</a> on <a href="https://unsplash.com/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
-- Sample Male photo by <span> <a href="https://unsplash.com/@erik_lucatero?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Erik Lucatero</a> on <a href="https://unsplash.com/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
+```

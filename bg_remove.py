@@ -93,14 +93,14 @@ class BGRemove():
             im = im.cuda()
         return im
 
-    def post_process(self, mask_data, background=False, backgound_path='assets/background/background.jpg'):
+    def post_process(self, mask_data, background=False, background_path='assets/background/background.jpg'):
         matte = F.interpolate(mask_data, size=(
             self.height, self.width), mode='area')
         matte = matte.repeat(1, 3, 1, 1)
         matte = matte[0].data.cpu().numpy().transpose(1, 2, 0)
         height, width, _ = matte.shape
         if background:
-            back_image = self.file_load(backgound_path)
+            back_image = self.file_load(background_path)
             back_image = cv2.resize(
                 back_image, (width, height), cv2.INTER_AREA)
         else:
@@ -111,14 +111,14 @@ class BGRemove():
         matte = matte * self.original_im + (1 - matte) * back_image
         return matte
 
-    def image(self, filename, background=False, output='output/', save=True):
+    def image(self, filename, background=False, output='output/', background_path='assets/background/background.jpg', save=True):
         output = self.dir_check(output)
 
         self.im_name = filename.split('/')[-1]
         im = self.file_load(filename)
         im = self.pre_process(im)
         _, _, matte = BGRemove.modnet(im, inference=False)
-        matte = self.post_process(matte, background)
+        matte = self.post_process(matte, background, background_path)
 
         if save:
             matte = np.uint8(matte)
